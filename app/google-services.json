@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "506116952885",
+    "project_id": "buyvision-8d825",
+    "storage_bucket": "buyvision-8d825.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:506116952885:android:37b6415d66be338bd6327c",
+        "android_client_info": {
+          "package_name": "com.hse.buyvision"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "506116952885-gc5t83bqmtd528j2cgh9gh3bfelrrup0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvgWUzayAds1yx-GSmri68TaQuGmm7O04"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "506116952885-gc5t83bqmtd528j2cgh9gh3bfelrrup0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

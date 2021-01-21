@@ -30,13 +30,4 @@
         android:textColor="#ffea00"
         android:text="Catch picture"
         />
-
-    <Button
-        android:id = "@+id/analyze_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/catch_button"
-        android:textColor="#c7bf00"
-        android:text="Analyze text"
-        />
 </RelativeLayout>

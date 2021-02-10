@@ -62,9 +62,9 @@ public class MainActivity extends AppCompatActivity {
             imageBitmap = (Bitmap)extras.get("data");
             Preprocessor preprocessor = new Preprocessor(imageBitmap);
             filteredBitmap = preprocessor.preprocess();
-            image_view.setImageBitmap(imageBitmap);
+            image_view.setImageBitmap(filteredBitmap);
         }
-        FirebaseVisionImage firebaseVisionImage = FirebaseVisionImage.fromBitmap(imageBitmap);
+        FirebaseVisionImage firebaseVisionImage = FirebaseVisionImage.fromBitmap(filteredBitmap);
         FirebaseVisionTextRecognizer textRecognizer = FirebaseVision.getInstance().getCloudTextRecognizer();
         Task<FirebaseVisionText> result = textRecognizer.
                 processImage(firebaseVisionImage).
@@ -81,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+
 
     // Make intent to create photo by camera
     private void dispatchTakePictureIntent() {

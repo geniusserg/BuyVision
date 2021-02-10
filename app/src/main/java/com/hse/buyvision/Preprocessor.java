@@ -18,7 +18,7 @@ public class Preprocessor {
         return source;
     }
 
-    private Bitmap getSource() {
+    public Bitmap getSource() {
         return source;
     }
 
@@ -48,22 +48,16 @@ public class Preprocessor {
     }
 
     public Bitmap bilinearFilter(){
-        return Bitmap.createScaledBitmap(source, 480, 360, true);
+        return Bitmap.createScaledBitmap(source, source.getWidth(), source.getHeight(), true);
     }
 
     public void rotate(){
-
-    }
-    public void grayscale(){
-
+//rotate image
     }
     public void contrast(){
-
+//add filter with high contrast
     }
-    public void filter(){
-
-    }
-    public void grid(){
-
+    public void catTextBlocks(){
+//cat text block
     }
 }

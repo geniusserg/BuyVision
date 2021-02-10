@@ -58,8 +58,10 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
-            imageBitmap = (Bitmap) extras.get("data");
-            image_view.setImageBitmap(imageBitmap);
+            imageBitmap = (Bitmap)extras.get("data");
+            Preprocessor preprocessor = new Preprocessor();
+            Bitmap invertedBitmap = preprocessor.invert(imageBitmap);
+            image_view.setImageBitmap(invertedBitmap);
         }
         FirebaseVisionImage firebaseVisionImage = FirebaseVisionImage.fromBitmap(imageBitmap);
         FirebaseVisionTextRecognizer textRecognizer = FirebaseVision.getInstance().getCloudTextRecognizer();
@@ -85,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(MainActivity.this, "Error: can not take a photo", Toast.LENGTH_LONG);
+            Toast.makeText(MainActivity.this, "Error: can not take a photo", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -98,10 +100,11 @@ public class MainActivity extends AppCompatActivity {
             for (FirebaseVisionText.Line line: block.getLines()) {
                 for (FirebaseVisionText.Element element: line.getElements()) {
                     String elementText = element.getText();
-                    blockText += elementText;
+                    blockText += elementText + " ";
                 }
             }
             resultText += blockText + "\n";
+            blockNumber++;
         }
         System.out.println(resultText);
         analyzed_text.setText(resultText);

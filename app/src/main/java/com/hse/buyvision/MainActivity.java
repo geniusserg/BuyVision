@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView analyzed_text;
     private ImageView image_view;
     private Bitmap imageBitmap;
+    private Bitmap filteredBitmap;
     private String recognizedText;
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
@@ -59,9 +60,9 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             imageBitmap = (Bitmap)extras.get("data");
-            Preprocessor preprocessor = new Preprocessor();
-            Bitmap invertedBitmap = preprocessor.invert(imageBitmap);
-            image_view.setImageBitmap(invertedBitmap);
+            Preprocessor preprocessor = new Preprocessor(imageBitmap);
+            filteredBitmap = preprocessor.preprocess();
+            image_view.setImageBitmap(imageBitmap);
         }
         FirebaseVisionImage firebaseVisionImage = FirebaseVisionImage.fromBitmap(imageBitmap);
         FirebaseVisionTextRecognizer textRecognizer = FirebaseVision.getInstance().getCloudTextRecognizer();

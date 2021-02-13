@@ -7,6 +7,7 @@ import androidx.core.content.FileProvider;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         catch_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                dispatchTakePictureIntent();
             }
         });
     }
@@ -66,13 +67,16 @@ public class MainActivity extends AppCompatActivity {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             File photoFile = null;
+            Log.println(Log.INFO,"start takiong pict", "START");
             try {
                 photoFile = createImageFile();
-            } catch (IOException ignored) {
+            } catch (IOException e) {
+                Toast.makeText(MainActivity.this, "Error: can not find image", Toast.LENGTH_LONG).show();
+                Log.println(Log.ASSERT,"start takiong pict", "START");
             }
             if (photoFile != null) {
-                createdPhotoUri = FileProvider.getUriForFile(this,
-                        "com.example.android.fileprovider",
+                Uri createdPhotoUri = FileProvider.getUriForFile(this,
+                        "com.hse.buyvision.fileprovider",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, createdPhotoUri);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
@@ -87,15 +91,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            FirebaseVisionImage firebaseVisionImage = null;
-            try {
-                firebaseVisionImage = FirebaseVisionImage.fromFilePath(this, createdPhotoUri);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            //Preprocess image
+            Bitmap imageBitmap = BitmapFactory.decodeFile(currentPhotoPath);
             Preprocessor preprocessor = new Preprocessor(imageBitmap);
             filteredBitmap = preprocessor.preprocess();
-            image_view.setImageBitmap(filteredBitmap);
+
+            image_view.setImageBitmap(filteredBitmap); // GUI
+
+            //Recognize
+            FirebaseVisionImage firebaseVisionImage = null;
+            firebaseVisionImage = FirebaseVisionImage.fromBitmap(filteredBitmap);
             FirebaseVisionTextRecognizer textRecognizer = FirebaseVision.getInstance().getCloudTextRecognizer();
             Task<FirebaseVisionText> result = textRecognizer.
                     processImage(firebaseVisionImage).
@@ -124,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
                 storageDir      /* directory */
         );
         currentPhotoPath = image.getAbsolutePath();
+        Log.println(Log.INFO, "File", "File");
         return image;
     }
 

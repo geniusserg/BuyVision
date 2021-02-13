@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -39,13 +40,13 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1 ;
-    private Button catch_button;
     private TextView analyzed_text;
     private ImageView image_view;
     private Bitmap imageBitmap;
-    private Bitmap filteredBitmap;
     private String currentPhotoPath;
     private Uri createdPhotoUri;
+    private String resultText;
+    private Button catch_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         catch_button = findViewById(R.id.catch_button);
         analyzed_text  = findViewById(R.id.analyzed_text);
+        analyzed_text.setMovementMethod(new ScrollingMovementMethod());
         image_view = findViewById(R.id.image_view);
         catch_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,14 +92,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        catch_button.setEnabled(false);
+        catch_button.setText(R.string.loading_button);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             //Preprocess image
             Bitmap imageBitmap = BitmapFactory.decodeFile(currentPhotoPath);
             Preprocessor preprocessor = new Preprocessor(imageBitmap);
-            filteredBitmap = preprocessor.preprocess();
+            Bitmap filteredBitmap = preprocessor.preprocess();
 
-            image_view.setImageBitmap(filteredBitmap); // GUI
+            image_view.setImageBitmap(imageBitmap); // GUI
 
+            analyzed_text.setText(R.string.loading_text);
             //Recognize
             FirebaseVisionImage firebaseVisionImage = null;
             firebaseVisionImage = FirebaseVisionImage.fromBitmap(filteredBitmap);
@@ -116,6 +121,8 @@ public class MainActivity extends AppCompatActivity {
                 };
             });
         }
+        catch_button.setText(R.string.photo_button);
+        catch_button.setEnabled(true);
     }
 
     private File createImageFile() throws IOException {
@@ -136,10 +143,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void parseFirebaseVisionTextBlocks(FirebaseVisionText result){
-        String resultText = "";
-        int blockNumber = 0;
+        resultText = "";
         for (FirebaseVisionText.TextBlock block: result.getTextBlocks()) {
-            resultText = resultText + "Block " + Integer.toString(blockNumber) + "\n";
             String blockText = "";
             for (FirebaseVisionText.Line line: block.getLines()) {
                 for (FirebaseVisionText.Element element: line.getElements()) {
@@ -148,8 +153,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             resultText += blockText + "\n";
-            blockNumber++;
         }
+        System.out.println("TEXT RECOGNITION RESULT");
         System.out.println(resultText);
         analyzed_text.setText(resultText);
     }

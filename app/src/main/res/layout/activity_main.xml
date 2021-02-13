@@ -10,7 +10,7 @@
     <ImageView
         android:id = "@+id/image_view"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="200dp"
         />
 
     <TextView
@@ -18,9 +18,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/image_view"
-        android:text="DEFAULT TEXT"
+        android:text="@string/default_text"
         android:textColor="#c7bf00"
-        android:textSize="26sp" />
+        android:textSize="26sp"
+        android:scrollbars="vertical"/>
 
     <Button
         android:id = "@+id/catch_button"
@@ -28,6 +29,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:textColor="#ffea00"
-        android:text="Catch picture"
+        android:text="@string/photo_button"
         />
 </RelativeLayout>

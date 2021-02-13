@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Buy Vision</string>
+    <string name="default_text">TAKE YOUR FIRST PHOTO</string>
+    <string name="photo_button">TAKE PHOTO</string>
+    <string name="loading_button">LOADING…</string>
+    <string name="loading_text">Loading: Recognize Image</string>
 </resources>

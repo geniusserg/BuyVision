@@ -4,4 +4,6 @@
     <string name="photo_button">TAKE PHOTO</string>
     <string name="loading_button">LOADING…</string>
     <string name="loading_text">Loading: Recognize Image</string>
+    <string name="recgonize_error">Can not connect to Firebase to recognize image</string>
+    <string name="notext_error">No text detected</string>
 </resources>

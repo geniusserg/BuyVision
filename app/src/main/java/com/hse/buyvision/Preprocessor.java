@@ -18,33 +18,20 @@ import java.util.Date;
 
 public class Preprocessor {
     private static Bitmap source;
-    private static Preprocessor instance = null;
-    private Preprocessor(){
-    }
 
-    public Bitmap preprocess(){
+    public static Bitmap preprocess(Bitmap input){
+        source = input;
         source = bilinearFilter();
         source = invert();
         return source;
     }
 
-    public static Preprocessor getInstance(){
-        if (instance == null){
-            instance = new Preprocessor();
-        }
-        return instance;
-    }
-
-    public static Preprocessor getInstance(Bitmap inputSource){
-        source = inputSource;
-        return getInstance();
-    }
-    public Bitmap getSource() {
+    public static Bitmap getSource() {
         return source;
     }
 
     //invert input image to make more contrast
-    public Bitmap invert()
+    public static Bitmap invert()
     {
         int height = source.getHeight();
         int width = source.getWidth();
@@ -68,31 +55,18 @@ public class Preprocessor {
         return bitmap;
     }
 
-    public Bitmap bilinearFilter(){
+    public static Bitmap bilinearFilter(){
         return Bitmap.createScaledBitmap(source, source.getWidth(), source.getHeight(), true);
     }
 
-    public void rotate(){
+    public static void rotate(){
 //rotate image
     }
-    public void contrast(){
+    public static void contrast(){
 //add filter with high contrast
     }
-    public void catTextBlocks(){
+    public static void catTextBlocks(){
 //cat text block
-    }
-
-    public File createImageFile(File storageDir) throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-        Log.println(Log.INFO, "File", "File");
-        return image;
     }
 
 

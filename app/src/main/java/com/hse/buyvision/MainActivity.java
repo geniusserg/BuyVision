@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private Uri createdPhotoUri;
     private String resultText;
     private Button catch_button;
+    private File externalFilesDir;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,12 +58,8 @@ public class MainActivity extends AppCompatActivity {
         analyzed_text  = findViewById(R.id.analyzed_text);
         analyzed_text.setMovementMethod(new ScrollingMovementMethod());
         image_view = findViewById(R.id.image_view);
-        catch_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dispatchTakePictureIntent();
-            }
-        });
+        catch_button.setOnClickListener(v -> dispatchTakePictureIntent());
+        externalFilesDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
     }
 
     private void dispatchTakePictureIntent() {
@@ -71,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
             File photoFile = null;
             Log.println(Log.INFO,"start takiong pict", "START");
             try {
-                photoFile = createImageFile();
+                photoFile = Preprocessor.getInstance().createImageFile(externalFilesDir);
             } catch (IOException e) {
                 Toast.makeText(MainActivity.this, "Error: can not find image", Toast.LENGTH_LONG).show();
                 Log.println(Log.ASSERT,"start takiong pict", "START");
@@ -97,13 +94,9 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             //Preprocess image
             Bitmap imageBitmap = BitmapFactory.decodeFile(currentPhotoPath);
-            Preprocessor preprocessor = new Preprocessor(imageBitmap);
-            Bitmap filteredBitmap = preprocessor.preprocess();
-
-            image_view.setImageBitmap(imageBitmap); // GUI
-
+            Bitmap filteredBitmap = Preprocessor.getInstance(imageBitmap).preprocess();
+            image_view.setImageBitmap(imageBitmap);
             analyzed_text.setText(R.string.loading_text);
-            //Recognize
             FirebaseVisionImage firebaseVisionImage = null;
             firebaseVisionImage = FirebaseVisionImage.fromBitmap(filteredBitmap);
             FirebaseVisionTextRecognizer textRecognizer = FirebaseVision.getInstance().getCloudTextRecognizer();
@@ -112,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                     addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
                         @Override
                         public void onSuccess(FirebaseVisionText firebaseVisionText) {
-                            parseFirebaseVisionTextBlocks(firebaseVisionText);
+                            analyzed_text.setText(Analyzer.getInstance().parseFirebaseVisionTextBlocks(firebaseVisionText));
                         };
                     }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -123,40 +116,6 @@ public class MainActivity extends AppCompatActivity {
         }
         catch_button.setText(R.string.photo_button);
         catch_button.setEnabled(true);
-    }
-
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-        currentPhotoPath = image.getAbsolutePath();
-        Log.println(Log.INFO, "File", "File");
-        return image;
-    }
-
-
-
-    private void parseFirebaseVisionTextBlocks(FirebaseVisionText result){
-        resultText = "";
-        for (FirebaseVisionText.TextBlock block: result.getTextBlocks()) {
-            String blockText = "";
-            for (FirebaseVisionText.Line line: block.getLines()) {
-                for (FirebaseVisionText.Element element: line.getElements()) {
-                    String elementText = element.getText();
-                    blockText += elementText + " ";
-                }
-            }
-            resultText += blockText + "\n";
-        }
-        System.out.println("TEXT RECOGNITION RESULT");
-        System.out.println(resultText);
-        analyzed_text.setText(resultText);
     }
 
 }

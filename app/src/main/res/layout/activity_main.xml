@@ -33,4 +33,12 @@
         android:text="@string/photo_button"
         android:textColor="#ffea00"
         android:background="#c4c4c4"/>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
 </RelativeLayout>

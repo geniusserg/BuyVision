@@ -14,8 +14,10 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private File externalFilesDir;
     private File photoFile;
     private String returnedText;
+    private ProgressBar progress_bar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         image_view = findViewById(R.id.image_view);
         catch_button.setOnClickListener(v -> dispatchTakePictureIntent());
         externalFilesDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        progress_bar = findViewById(R.id.progress_bar);
     }
 
 
@@ -82,12 +86,22 @@ public class MainActivity extends AppCompatActivity {
         catch_button.setText(R.string.loading_button);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             //Preprocess image
+            progress_bar.setVisibility(View.VISIBLE);
+            progress_bar.setProgress(10);
             Bitmap imageBitmap = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
+            progress_bar.setProgress(30);
             Bitmap filteredBitmap = Preprocessor.preprocess(imageBitmap);
+            progress_bar.setProgress(50);
             image_view.setImageBitmap(imageBitmap);
-            analyzed_text.setText(R.string.loading_text);
             try{
-                Analyzer.textResult.observe(this, s -> analyzed_text.setText(s));
+                Analyzer.textResult.setValue("Loading...");
+                Analyzer.textResult.observe(this, new Observer<String>() {
+                    @Override
+                    public void onChanged(String s) {
+                        analyzed_text.setText(s);
+                        progress_bar.setProgress(90);
+                    }
+                });
                 Analyzer.analyzeText(filteredBitmap);
             }
             catch (RuntimeException e){
@@ -96,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
         }
         catch_button.setText(R.string.photo_button);
         catch_button.setEnabled(true);
+        progress_bar.setVisibility(View.INVISIBLE);
     }
 
 }

@@ -2,6 +2,7 @@ package com.hse.buyvision;
 
 
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,12 +27,7 @@ class Analyzer{
                 addOnSuccessListener(firebaseVisionText -> {
                     resultBlocks = firebaseVisionText;
                     textResult.setValue(parseFirebaseVisionTextBlocks());
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                throw new RuntimeException();
-            };
-        });
+                }).addOnFailureListener(e -> Log.d("FB Error", "Cant analyze "));
     }
 
     public static String parseFirebaseVisionTextBlocks(){

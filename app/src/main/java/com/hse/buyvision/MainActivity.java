@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -53,10 +54,20 @@ public class MainActivity extends AppCompatActivity {
         catch_button = findViewById(R.id.catch_button);
         analyzed_text  = findViewById(R.id.analyzed_text);
         analyzed_text.setMovementMethod(new ScrollingMovementMethod());
+        analyzed_text.setOnTouchListener((v, event) -> {
+            Speech.stop();
+            Speech.vocalise(analyzed_text.getText().toString());
+            return false;
+        });
         image_view = findViewById(R.id.image_view);
-        catch_button.setOnClickListener(v -> dispatchTakePictureIntent());
-        externalFilesDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        catch_button.setOnClickListener(v -> {
+            Speech.stop();
+            dispatchTakePictureIntent();
+        });
         progress_bar = findViewById(R.id.progress_bar);
+
+        externalFilesDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        Speech.init(this);
     }
 
 
@@ -85,22 +96,14 @@ public class MainActivity extends AppCompatActivity {
         catch_button.setEnabled(false);
         catch_button.setText(R.string.loading_button);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            //Preprocess image
-            progress_bar.setVisibility(View.VISIBLE);
-            progress_bar.setProgress(10);
             Bitmap imageBitmap = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-            progress_bar.setProgress(30);
             Bitmap filteredBitmap = Preprocessor.preprocess(imageBitmap);
-            progress_bar.setProgress(50);
             image_view.setImageBitmap(imageBitmap);
             try{
-                Analyzer.textResult.setValue("Loading...");
-                Analyzer.textResult.observe(this, new Observer<String>() {
-                    @Override
-                    public void onChanged(String s) {
-                        analyzed_text.setText(s);
-                        progress_bar.setProgress(90);
-                    }
+                Analyzer.textResult.setValue("Загрузка");
+                Analyzer.textResult.observe(this, s -> {
+                    analyzed_text.setText(s);
+                    Speech.vocalise(s);
                 });
                 Analyzer.analyzeText(filteredBitmap);
             }

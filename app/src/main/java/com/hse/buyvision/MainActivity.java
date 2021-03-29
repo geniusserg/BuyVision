@@ -31,6 +31,8 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 
+import org.json.JSONException;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -100,10 +102,17 @@ public class MainActivity extends AppCompatActivity {
             Bitmap filteredBitmap = Preprocessor.preprocess(imageBitmap);
             image_view.setImageBitmap(imageBitmap);
             try{
-                Analyzer.textResult.setValue("Загрузка");
+                analyzed_text.setText("Загрузка");
                 Analyzer.textResult.observe(this, s -> {
-                    analyzed_text.setText(s);
-                    Speech.vocalise(s);
+                    String analyzeResult = TextParser.parseFirebaseVisionTextBlocks(s);
+                    try {
+                        analyzed_text.setText(Translater.translate(analyzeResult));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Speech.vocalise(analyzeResult);
                 });
                 Analyzer.analyzeText(filteredBitmap);
             }

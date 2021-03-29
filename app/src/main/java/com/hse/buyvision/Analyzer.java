@@ -15,8 +15,9 @@ import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 
 class Analyzer{
-    private static FirebaseVisionText resultBlocks;
-    public static MutableLiveData<String> textResult = new MutableLiveData<String>("");
+    public static FirebaseVisionText resultBlocks;
+    public static MutableLiveData<FirebaseVisionText> textResult = new MutableLiveData<FirebaseVisionText>();
+
 
     public static void analyzeText(Bitmap filteredBitmap){
         FirebaseVisionImage firebaseVisionImage = null;
@@ -26,24 +27,8 @@ class Analyzer{
                 processImage(firebaseVisionImage).
                 addOnSuccessListener(firebaseVisionText -> {
                     resultBlocks = firebaseVisionText;
-                    textResult.setValue(parseFirebaseVisionTextBlocks());
+                    textResult.setValue(resultBlocks);
                 }).addOnFailureListener(e -> Log.d("FB Error", "Cant analyze "));
     }
 
-    public static String parseFirebaseVisionTextBlocks(){
-        String resultText = "";
-        for (FirebaseVisionText.TextBlock block: resultBlocks.getTextBlocks()) {
-            String blockText = "";
-            for (FirebaseVisionText.Line line: block.getLines()) {
-                for (FirebaseVisionText.Element element: line.getElements()) {
-                    String elementText = element.getText();
-                    blockText += elementText + " ";
-                }
-            }
-            resultText += blockText + "\n";
-        }
-        System.out.println("TEXT RECOGNITION RESULT");
-        System.out.println(resultText);
-        return resultText;
-    }
 }

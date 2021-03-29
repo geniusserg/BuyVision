@@ -31,6 +31,9 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 
+import org.json.JSONException;
+import org.w3c.dom.Text;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -43,8 +46,6 @@ public class MainActivity extends AppCompatActivity {
     private Button catch_button;
     private File externalFilesDir;
     private File photoFile;
-    private String returnedText;
-    private ProgressBar progress_bar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,10 +65,9 @@ public class MainActivity extends AppCompatActivity {
             Speech.stop();
             dispatchTakePictureIntent();
         });
-        progress_bar = findViewById(R.id.progress_bar);
-
         externalFilesDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         Speech.init(this);
+
     }
 
 
@@ -96,24 +96,46 @@ public class MainActivity extends AppCompatActivity {
         catch_button.setEnabled(false);
         catch_button.setText(R.string.loading_button);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            analyzed_text.setText("Загрузка");
+            Speech.vocalise("Загрузка"); //TODO REMOVE!!!
             Bitmap imageBitmap = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
             Bitmap filteredBitmap = Preprocessor.preprocess(imageBitmap);
             image_view.setImageBitmap(imageBitmap);
-            try{
-                Analyzer.textResult.setValue("Загрузка");
-                Analyzer.textResult.observe(this, s -> {
-                    analyzed_text.setText(s);
-                    Speech.vocalise(s);
-                });
+
+            try {
                 Analyzer.analyzeText(filteredBitmap);
+                Analyzer.textResult.observe(this, s -> {
+                    if (s == null){
+                        return;
+                    }
+                    Translater translater = new Translater();
+                    System.out.println(translater.resultedText);
+                    String analyzeResult = TextParser.parseFirebaseVisionTextBlocks(s);
+                    analyzeResult = TextParser.removeTrash(analyzeResult);
+                    translater.setTranslateString(analyzeResult);
+                    translater.start();
+                    try {
+                        translater.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    analyzeResult = translater.resultedText;
+                    analyzeResult = TextParser.removeTrash(analyzeResult);
+                    analyzed_text.setText(analyzeResult);
+                    Speech.vocalise(analyzeResult);
+                    translater.setTranslateString("");
+                    Analyzer.textResult.setValue(null);
+                    Analyzer.textResult.removeObservers(this);
+                });
+
             }
             catch (RuntimeException e){
                 analyzed_text.setText(R.string.recgonize_error);
             }
+
         }
         catch_button.setText(R.string.photo_button);
         catch_button.setEnabled(true);
-        progress_bar.setVisibility(View.INVISIBLE);
     }
 
 }

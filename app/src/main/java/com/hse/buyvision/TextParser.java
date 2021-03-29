@@ -5,8 +5,6 @@ import com.google.firebase.ml.vision.text.FirebaseVisionText;
 public class TextParser {
     private static final int LENGTH_LIMIT = 150;
 
-    private static String analyzedText = "";
-
 
     public static String parseFirebaseVisionTextBlocks(FirebaseVisionText resultBlocks){
         StringBuilder resultText = new StringBuilder();
@@ -26,30 +24,27 @@ public class TextParser {
         return resultText.toString();
     }
 
-    private static String getPipelineResult(String text){
-        analyzedText = text;
-        removeNumbers();
-        return analyzedText;
+    public static String getPipelineResult(String text){
+        // PUT YOUR TRANSFORMS HERE
+        text = cutOnLimit(text);
+        text = removeNumbers(text);
+        text = removeTrash(text);
+        return text;
     }
 
-    private static void translateOnRus(){
-        //analyzedText = Translater.translate(analyzedText);
+    public static String removeNumbers(String text){
+        return text.replaceAll("[0-9]", " ");
     }
 
-    private static void removeNumbers(){
-
+    public static String removeTrash(String text){
+        return text.replace("&quot", " ").
+                replace("[", "").
+                replace("]", "").
+                replace(";", "");
     }
 
-    private static void removeData(){
-
-    }
-
-    private static void removeTrash(){
-
-    }
-
-    private static void cutOnLimit(){
-        analyzedText = analyzedText.substring(0, LENGTH_LIMIT);
+    public static String cutOnLimit(String text){
+        return text.substring(0, Math.min(LENGTH_LIMIT, text.length()));
     }
 
 

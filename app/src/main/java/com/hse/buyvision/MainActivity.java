@@ -32,6 +32,7 @@ import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 
 import org.json.JSONException;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,8 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private Button catch_button;
     private File externalFilesDir;
     private File photoFile;
-    private String returnedText;
-    private ProgressBar progress_bar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +66,9 @@ public class MainActivity extends AppCompatActivity {
             Speech.stop();
             dispatchTakePictureIntent();
         });
-        progress_bar = findViewById(R.id.progress_bar);
-
         externalFilesDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         Speech.init(this);
+        dispatchTakePictureIntent();
     }
 
 
@@ -98,31 +97,32 @@ public class MainActivity extends AppCompatActivity {
         catch_button.setEnabled(false);
         catch_button.setText(R.string.loading_button);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            analyzed_text.setText("Загрузка");
+            Speech.vocalise("Загрузка"); //TODO REMOVE!!!
             Bitmap imageBitmap = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
             Bitmap filteredBitmap = Preprocessor.preprocess(imageBitmap);
             image_view.setImageBitmap(imageBitmap);
-            try{
-                analyzed_text.setText("Загрузка");
+            Translater translater = new Translater();
+            translater.textResult.observe(this, s -> {
+                s = TextParser.removeTrash(s);
+                analyzed_text.setText(s);
+                Speech.vocalise(s);
+            });
+            try {
                 Analyzer.textResult.observe(this, s -> {
                     String analyzeResult = TextParser.parseFirebaseVisionTextBlocks(s);
-                    try {
-                        analyzed_text.setText(Translater.translate(analyzeResult));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    Speech.vocalise(analyzeResult);
+                    translater.setTranslateString(analyzeResult);
+                    translater.start();
                 });
                 Analyzer.analyzeText(filteredBitmap);
             }
             catch (RuntimeException e){
                 analyzed_text.setText(R.string.recgonize_error);
             }
+
         }
         catch_button.setText(R.string.photo_button);
         catch_button.setEnabled(true);
-        progress_bar.setVisibility(View.INVISIBLE);
     }
 
 }

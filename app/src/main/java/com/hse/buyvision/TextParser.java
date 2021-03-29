@@ -13,15 +13,12 @@ public class TextParser {
             for (FirebaseVisionText.Line line: block.getLines()) {
                 for (FirebaseVisionText.Element element: line.getElements()) {
                     String elementText = element.getText();
-                    elementText = getPipelineResult(elementText);
                     blockText.append(elementText).append(" ");
                 }
             }
             resultText.append(blockText).append("\n");
         }
-        System.out.println("TEXT RECOGNITION RESULT");
-        System.out.println(resultText);
-        return resultText.toString();
+        return getPipelineResult(resultText.toString());
     }
 
     public static String getPipelineResult(String text){

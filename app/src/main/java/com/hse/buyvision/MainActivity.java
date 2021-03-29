@@ -109,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
                     Translater translater = new Translater();
-                    System.out.println(translater.resultedText);
                     String analyzeResult = TextParser.parseFirebaseVisionTextBlocks(s);
                     analyzeResult = TextParser.removeTrash(analyzeResult);
                     translater.setTranslateString(analyzeResult);

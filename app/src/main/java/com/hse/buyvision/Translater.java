@@ -21,7 +21,9 @@ public class Translater extends Thread{
     private final String requestParams =
             "&target=ru&source=en&key=AIzaSyBsRLb497BBczXgvJUOEmRsSABIx5VX7AU";
     private String requestText = "";
+    public String resultedText = "";
     public MutableLiveData<String> textResult = new MutableLiveData<>();
+
 
 
     private String getRequestUrl(String requestText){
@@ -95,7 +97,9 @@ public class Translater extends Thread{
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        System.out.println(result);
         textResult.postValue(result);
+        resultedText = result;
         System.out.println(textResult.getValue());
     }
 }

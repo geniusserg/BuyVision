@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
     private File externalFilesDir;
     private File photoFile;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         FirebaseApp.initializeApp(MainActivity.this);
@@ -68,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         });
         externalFilesDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         Speech.init(this);
-        dispatchTakePictureIntent();
+
     }
 
 
@@ -102,19 +101,33 @@ public class MainActivity extends AppCompatActivity {
             Bitmap imageBitmap = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
             Bitmap filteredBitmap = Preprocessor.preprocess(imageBitmap);
             image_view.setImageBitmap(imageBitmap);
-            Translater translater = new Translater();
-            translater.textResult.observe(this, s -> {
-                s = TextParser.removeTrash(s);
-                analyzed_text.setText(s);
-                Speech.vocalise(s);
-            });
+
             try {
+                Analyzer.analyzeText(filteredBitmap);
                 Analyzer.textResult.observe(this, s -> {
+                    if (s == null){
+                        return;
+                    }
+                    Translater translater = new Translater();
+                    System.out.println(translater.resultedText);
                     String analyzeResult = TextParser.parseFirebaseVisionTextBlocks(s);
+                    analyzeResult = TextParser.removeTrash(analyzeResult);
                     translater.setTranslateString(analyzeResult);
                     translater.start();
+                    try {
+                        translater.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    analyzeResult = translater.resultedText;
+                    analyzeResult = TextParser.removeTrash(analyzeResult);
+                    analyzed_text.setText(analyzeResult);
+                    Speech.vocalise(analyzeResult);
+                    translater.setTranslateString("");
+                    Analyzer.textResult.setValue(null);
+                    Analyzer.textResult.removeObservers(this);
                 });
-                Analyzer.analyzeText(filteredBitmap);
+
             }
             catch (RuntimeException e){
                 analyzed_text.setText(R.string.recgonize_error);

@@ -37,7 +37,7 @@ public class TextParser {
     }
 
     public static String removeTrash(String text){
-        return text.replace("&quot", " ").
+        return text.replace("&quot;", " ").
                 replace("[", "").
                 replace("]", "").
                 replace(";", "");

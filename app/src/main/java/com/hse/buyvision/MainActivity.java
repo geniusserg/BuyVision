@@ -1,58 +1,78 @@
 package com.hse.buyvision;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
-import androidx.lifecycle.Observer;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import androidx.biometric.BiometricPrompt;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.ml.vision.FirebaseVision;
-import com.google.firebase.ml.vision.common.FirebaseVisionImage;
-import com.google.firebase.ml.vision.text.FirebaseVisionText;
-import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
-
-import org.json.JSONException;
-import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.Executor;
 
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1 ;
+
+    private Executor executor;
+    private BiometricPrompt biometricPrompt;
+    private BiometricPrompt.PromptInfo promptInfo;
     private TextView analyzed_text;
     private ImageView image_view;
     private Button catch_button;
     private File externalFilesDir;
     private File photoFile;
+    private Button historyButton;
 
+    @RequiresApi(api = Build.VERSION_CODES.P)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         FirebaseApp.initializeApp(MainActivity.this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        executor = ContextCompat.getMainExecutor(this);
+        biometricPrompt = new BiometricPrompt(MainActivity.this, executor, new BiometricPrompt.AuthenticationCallback(){
+
+            @Override
+            public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
+                super.onAuthenticationError(errorCode, errString);
+            }
+
+            @Override
+            public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
+                super.onAuthenticationSucceeded(result);
+                Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
+                MainActivity.this.startActivity(intent);
+            }
+
+            @Override
+            public void onAuthenticationFailed() {
+                super.onAuthenticationFailed();
+            }
+        });
+        promptInfo = new BiometricPrompt.PromptInfo.Builder()
+                .setTitle(getString(R.string.auth_dialog_title))
+                .setSubtitle(getString(R.string.auth_dialog_description))
+                .build();
+
         catch_button = findViewById(R.id.catch_button);
+        historyButton = findViewById(R.id.historyButton);
         analyzed_text  = findViewById(R.id.analyzed_text);
         analyzed_text.setMovementMethod(new ScrollingMovementMethod());
         analyzed_text.setOnTouchListener((v, event) -> {
@@ -65,9 +85,13 @@ public class MainActivity extends AppCompatActivity {
             Speech.stop();
             dispatchTakePictureIntent();
         });
+        historyButton.setOnTouchListener((v, event) -> {
+            biometricPrompt.authenticate(promptInfo);
+            return false;
+        });
         externalFilesDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         Speech.init(this);
-
+        dispatchTakePictureIntent();
     }
 
 
@@ -97,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
         catch_button.setText(R.string.loading_button);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             analyzed_text.setText("Загрузка");
-            Speech.vocalise("Загрузка"); //TODO REMOVE!!!
+            Speech.vocalise("Загрузка");
             Bitmap imageBitmap = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
             Bitmap filteredBitmap = Preprocessor.preprocess(imageBitmap);
             image_view.setImageBitmap(imageBitmap);

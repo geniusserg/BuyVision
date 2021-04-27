@@ -59,15 +59,4 @@ public class Preprocessor {
         return Bitmap.createScaledBitmap(source, source.getWidth(), source.getHeight(), true);
     }
 
-    public static void rotate(){
-//rotate image
-    }
-    public static void contrast(){
-//add filter with high contrast
-    }
-    public static void catTextBlocks(){
-//cat text block
-    }
-
-
 }

@@ -11,7 +11,7 @@
         android:id = "@+id/image_view"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        />
+        android:contentDescription="@string/image_description" />
 
     <TextView
         android:id="@+id/analyzed_text"
@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="#c4c4c4"
-        android:text="@string/photo_button"
+        android:text="@string/history_button"
         android:textColor="#ffea00" />
 
     <Button
@@ -45,11 +45,6 @@
         android:text="@string/photo_button"
         android:textColor="#ffea00" />
 
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
 
 </RelativeLayout>

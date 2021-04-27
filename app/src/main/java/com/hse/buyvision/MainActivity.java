@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         promptInfo = new BiometricPrompt.PromptInfo.Builder()
                 .setTitle(getString(R.string.auth_dialog_title))
                 .setSubtitle(getString(R.string.auth_dialog_description))
+                .setNegativeButtonText(getString(R.string.auth_dialog_negative))
                 .build();
 
         catch_button = findViewById(R.id.catch_button);
@@ -91,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         });
         externalFilesDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         Speech.init(this);
-        dispatchTakePictureIntent();
+        // dispatchTakePictureIntent();
     }
 
 

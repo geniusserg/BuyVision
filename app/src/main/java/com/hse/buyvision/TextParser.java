@@ -24,7 +24,7 @@ public class TextParser {
     public static String getPipelineResult(String text){
         // PUT YOUR TRANSFORMS HERE
         text = cutOnLimit(text);
-        text = removeNumbers(text);
+        // text = removeNumbers(text);
         text = removeTrash(text);
         return text;
     }

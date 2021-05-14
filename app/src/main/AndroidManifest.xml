@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hse.buyvision">
+
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="true"
-        />
+        android:required="true" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -12,6 +13,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BuyVision">
+        <activity
+            android:name=".HistoryActivity"
+            android:label="@string/title_activity_scrolling"
+            android:theme="@style/Theme.BuyVision.NoActionBar"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,14 +24,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <provider android:authorities="com.hse.buyvision.fileprovider"
+
+        <provider
             android:name="androidx.core.content.FileProvider"
+            android:authorities="com.hse.buyvision.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
-            <meta-data android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"></meta-data>
-
-
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
         </provider>
     </application>
 

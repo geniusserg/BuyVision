@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "506116952885-4a1g0roou4jpctsbtp2h8alh2241hk7i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hse.buyvision",
+            "certificate_hash": "0fb6fe796df77bdbd0685ea5e6637782007c3a48"
+          }
+        },
+        {
           "client_id": "506116952885-gc5t83bqmtd528j2cgh9gh3bfelrrup0.apps.googleusercontent.com",
           "client_type": 3
         }

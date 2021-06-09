@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private File externalFilesDir;
     private File photoFile;
     private Button historyButton;
+    private DBHelper dbHelper;
+    private DBWrapper dbWrapper;
 
     @RequiresApi(api = Build.VERSION_CODES.P)
     @Override
@@ -46,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
         FirebaseApp.initializeApp(MainActivity.this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        dbHelper = new DBHelper(getContext());
+        dbWrapper = new DBWrapper(dbHelper);
         executor = ContextCompat.getMainExecutor(this);
         biometricPrompt = new BiometricPrompt(MainActivity.this, executor, new BiometricPrompt.AuthenticationCallback(){
 
@@ -126,8 +130,11 @@ public class MainActivity extends AppCompatActivity {
             Bitmap imageBitmap = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
             Bitmap filteredBitmap = Preprocessor.preprocess(imageBitmap);
             image_view.setImageBitmap(imageBitmap);
-
+            ItemModel item = new ItemModel();
             try {
+                String analyzeResult = "";
+                item.photo = photoFile;
+                item.date = new Date();
                 Analyzer.analyzeText(filteredBitmap);
                 Analyzer.textResult.observe(this, s -> {
                     if (s == null){
@@ -151,12 +158,13 @@ public class MainActivity extends AppCompatActivity {
                     Analyzer.textResult.setValue(null);
                     Analyzer.textResult.removeObservers(this);
                 });
-
+                item.text = analyzeResult;
+                dbWrapper.write(item);
             }
             catch (RuntimeException e){
                 analyzed_text.setText(R.string.recgonize_error);
             }
-
+            
         }
         catch_button.setText(R.string.photo_button);
         catch_button.setEnabled(true);

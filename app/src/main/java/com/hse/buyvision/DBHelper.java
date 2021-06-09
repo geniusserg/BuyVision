@@ -5,7 +5,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_ENTRIES =
     "CREATE TABLE " + DatabaseEntry.TABLE_NAME + " (" +
     DatabaseEntry._ID + " INTEGER PRIMARY KEY," +
-    DatabaseEntry.COLUMN_NAME_DATE + " DATE," +
+    DatabaseEntry.COLUMN_NAME_DATE + " INTEGER," +
     DatabaseEntry.COLUMN_NAME_TEXT + " TEXT," +
     DatabaseEntry.COLUMN_NAME_FILE + " TEXT)";
 

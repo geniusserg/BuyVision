@@ -39,11 +39,15 @@ public class HistoryActivity extends AppCompatActivity {
     }
     public void updateUI(ItemModel item){
         if (item == null){
-            history_text.setText("Текст не был распознан");
+            String noTextError = "Текст не был распознан";
+            history_text.setText(noTextError);
+            Speech.vocalise(noTextError);
         }
         else{
-            history_text.setText(item.text);
+            String text = "[" + item.date.getMonth() + "]\n" + item.text;
+            history_text.setText(text);
             history_image.setImageBitmap(BitmapFactory.decodeFile(item.photo));
+            Speech.vocalise(text);
         }
     }
 

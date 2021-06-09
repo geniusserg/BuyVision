@@ -1,8 +1,9 @@
 package com.hse.buyvision;
 
 import java.io.File;
-import java.sql.Date;
+import java.util.Date;
 import java.util.ArrayList;
+import android.database.Cursor;
 
 public class DBWrapper{
     private DBHelper dbHelper;
@@ -12,7 +13,7 @@ public class DBWrapper{
     public void save(ItemModel item){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(DatabaseEntry.COLUMN_NAME_DATE, item.date);
+        values.put(DatabaseEntry.COLUMN_NAME_DATE, item.date.getTime());
         values.put(DatabaseEntry.COLUMN_NAME_TEXT, item.text);
         values.put(DatabaseEntry.COLUMN_NAME_FILE, item.photo.getAbsolutePath());
         long newRowId = db.insert(TABLE_NAME, null, values);
@@ -33,7 +34,7 @@ public class DBWrapper{
         cursor.moveToFirst();
         while (cursor.moveToNext()){
             ItemModel item = new ItemModel();
-            item.date = cursor.getString(cursor.getColumnIndex(DatabaseEntry.COLUMN_NAME_DATE));
+            item.date = new Date(cursor.getLong(cursor.getColumnIndex(DatabaseEntry.COLUMN_NAME_DATE)));
             item.text = cursor.getString(cursor.getColumnIndex(DatabaseEntry.COLUMN_NAME_TEXT));
             item.photo = cursor.getString(cursor.getColumnIndex(DatabaseEntry.COLUMN_NAME_FILE));
             itemsArray.add(item);

@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         FirebaseApp.initializeApp(MainActivity.this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        dbHelper = new DBHelper(getContext());
+        dbHelper = new DBHelper(MainActivity.this);
         dbWrapper = new DBWrapper(dbHelper);
         executor = ContextCompat.getMainExecutor(this);
         biometricPrompt = new BiometricPrompt(MainActivity.this, executor, new BiometricPrompt.AuthenticationCallback(){
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
                     Translater translater = new Translater();
-                    String analyzeResult = TextParser.parseFirebaseVisionTextBlocks(s);
+                    analyzeResult = TextParser.parseFirebaseVisionTextBlocks(s);
                     analyzeResult = TextParser.removeTrash(analyzeResult);
                     translater.setTranslateString(analyzeResult);
                     translater.start();

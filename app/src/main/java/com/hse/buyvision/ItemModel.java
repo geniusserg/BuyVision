@@ -8,4 +8,5 @@ public class ItemModel {
     public Date date;
     public String text;
     public String photo;
+    public ItemModel(){};
 }

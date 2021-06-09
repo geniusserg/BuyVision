@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
             ItemModel item = new ItemModel();
             try {
                 String analyzeResult = "";
-                item.photo = photoFile;
+                item.photo = photoFile.getAbsolutePath();
                 item.date = new Date();
                 Analyzer.analyzeText(filteredBitmap);
                 Analyzer.textResult.observe(this, s -> {

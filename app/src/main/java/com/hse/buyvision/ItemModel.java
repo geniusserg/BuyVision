@@ -7,5 +7,5 @@ import java.util.Date;
 public class ItemModel {
     public Date date;
     public String text;
-    public File photo;
+    public String photo;
 }

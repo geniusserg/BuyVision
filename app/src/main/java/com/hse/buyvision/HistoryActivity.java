@@ -43,7 +43,7 @@ public class HistoryActivity extends AppCompatActivity {
         }
         else{
             history_text.setText(item.text);
-            history_image.setImageBitmap(BitmapFactory.decodeFile(item.photo.getAbsolutePath()));
+            history_image.setImageBitmap(BitmapFactory.decodeFile(item.photo));
         }
     }
 

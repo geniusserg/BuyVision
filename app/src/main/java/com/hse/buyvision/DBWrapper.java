@@ -18,10 +18,22 @@ public class DBWrapper{
     }
     public void loadResults(){
         counter = -1;
-        Coursor coursor;
-        while (true){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Cursor cursor = db.query(
+            DatabaseEntry.TABLE_NAME,   // The table to query
+            null,             // The array of columns to return (pass null to get all)
+            null,              // The columns for the WHERE clause
+            null,          // The values for the WHERE clause
+            null,                   // don't group the rows
+            null,                   // don't filter by row groups
+            null               // The sort order
+        );
+        cursor.moveToFirst();
+        while (cursor.moveToNext()){
             ItemModel item = new ItemModel();
-            //////////////////////////////
+            item.date = cursor.getString(cursor.getColumnIndex(DatabaseEntry.COLUMN_NAME_DATE));
+            item.text = cursor.getString(cursor.getColumnIndex(DatabaseEntry.COLUMN_NAME_TEXT));
+            item.photo = cursor.getString(cursor.getColumnIndex(DatabaseEntry.COLUMN_NAME_FILE));
             itemsArray.add(item);
         }
     }

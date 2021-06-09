@@ -27,6 +27,7 @@ public class HistoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
+        /*
         history_text = findViewbyId(R.id.history_text);
         history_image = findViewbyId(R.id.history_image);
         prev_button = findViewbyId(R.id.prev_button);
@@ -36,6 +37,7 @@ public class HistoryActivity extends AppCompatActivity {
             updateUI(viewModel.getNext());
         });
         updateUI(viewModel.getNext());
+        */
     }
     public void updateUI(ItemModel item){
         if (item == null){

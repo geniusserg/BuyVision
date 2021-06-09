@@ -13,9 +13,39 @@ import android.view.View;
 
 public class HistoryActivity extends AppCompatActivity {
 
+    private int id = 0;
+    private TextView history_text;
+    private ImageView history_image;
+    private DBWrapper dbWrapper;
+    private ItemModel item;
+    private Button next_button;
+    private Button prev_button;
+    private Button exit_button;
+    private ViewModel viewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
+        history_text = findViewbyId(R.id.history_text);
+        history_image = findViewbyId(R.id.history_image);
+        prev_button = findViewbyId(R.id.prev_button);
+        next_button = findViewbyId(R.id.next_button);
+        exit_button = findViewbyId(R.id.exit_button);
+        next_button.setOnClickListener(v -> {
+            updateUI(viewModel.getNext());
+        });
+        updateUI(viewModel.getNext());
     }
+    public void updateUI(ItemModel item){
+        if (item == null){
+            history_text.setText("Текст не был распознан");
+        }
+        else{
+            history_text.setText(item.text);
+            history_image.setImageBitmap(BitmapFactory.decodeFile(item.photo.getAbsolutePath()));
+        }
+    }
+
+
 }

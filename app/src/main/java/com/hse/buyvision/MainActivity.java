@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                     Analyzer.textResult.removeObservers(this);
                 });
                 item.text = analyzeResult;
-                dbWrapper.write(item);
+                dbWrapper.save(item);
             }
             catch (RuntimeException e){
                 analyzed_text.setText(R.string.recgonize_error);

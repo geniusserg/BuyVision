@@ -29,8 +29,9 @@ public class TextParser {
         return text;
     }
 
-    public static String removeNumbers(String text){
-        return text.replaceAll("[0-9]", " ");
+    public static int extractNumber(String text){
+        return 50; //TODO MAKE EXTRACTOR OF NUMBERS
+        // search return text.("[0-9]", " ");
     }
 
     public static String removeTrash(String text){

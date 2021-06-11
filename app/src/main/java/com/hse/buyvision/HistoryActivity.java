@@ -56,6 +56,7 @@ public class HistoryActivity extends AppCompatActivity {
             System.out.println(item.text);
             history_text.setText(text);
             history_image.setImageBitmap(BitmapFactory.decodeFile(item.photo));
+
             Speech.vocalise(text);
         }
     }

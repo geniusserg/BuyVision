@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class DBWrapper{
     private DBHelper dbHelper;
-    private long counter = 0;
+    private long counter = -1;
     private ArrayList<ItemModel> itemsArray = new ArrayList<ItemModel>();
     public DBWrapper(DBHelper dbHelper) { this.dbHelper = dbHelper; };
     public void save(ItemModel item){
@@ -61,10 +61,9 @@ public class DBWrapper{
     public ItemModel getNext(){
         itemsArray.clear();
         loadResults();
-        System.out.println("qwertyuiopoiuytrewqwertyuiop    c"+counter);
+
         counter += 1;
-        System.out.println("qwertyuiopoiuytrewqwertyuiop    size"+itemsArray.size());
-        System.out.println("qwertyuiopoiuytrewqwertyuiop    c"+counter);
+
         return itemsArray.get((int)counter);
     }
 

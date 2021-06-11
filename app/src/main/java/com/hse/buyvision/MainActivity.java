@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private Button historyButton;
     private DBHelper dbHelper;
     private DBWrapper dbWrapper;
+    private ItemModel item;
 
     @RequiresApi(api = Build.VERSION_CODES.P)
     @Override
@@ -132,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
             Bitmap imageBitmap = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
             Bitmap filteredBitmap = Preprocessor.preprocess(imageBitmap);
             image_view.setImageBitmap(imageBitmap);
-            ItemModel item = new ItemModel();
+            item = new ItemModel();
             try {
                 item.photo = photoFile.getAbsolutePath();
                 item.date = new Date();
@@ -155,13 +156,15 @@ public class MainActivity extends AppCompatActivity {
                     analyzeResult=translater.resultedText;
                     analyzeResult=TextParser.removeTrash(analyzeResult);
                     analyzed_text.setText(analyzeResult);
+                    item.text=analyzeResult;
+                    System.out.println("Log{{{}"+item.text);
                     Speech.vocalise(analyzeResult);
                     translater.setTranslateString("");
                     Analyzer.textResult.setValue(null);
                     Analyzer.textResult.removeObservers(this);
                     Analyzer._result = analyzeResult;
                 });
-                item.text =Analyzer._result;
+                item.text = analyzed_text.getText().toString();
                 System.out.println("Log{{{}"+item.text);
                 dbWrapper.save(item);
             }

@@ -9,6 +9,7 @@ public class ViewModel {
         dbWrapper.loadResults();
     }
     public ItemModel getNext(){
+        System.out.println("GO!!!!!!!!!!!!!!");
         return dbWrapper.getNext();
     }
     public ItemModel getPrev(){

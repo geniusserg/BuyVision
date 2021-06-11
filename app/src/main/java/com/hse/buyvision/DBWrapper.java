@@ -3,25 +3,28 @@ package com.hse.buyvision;
 import java.io.File;
 import java.util.Date;
 import java.util.ArrayList;
+
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 public class DBWrapper{
     private DBHelper dbHelper;
-    private static long counter = 0;
+    private long counter = 0;
     private ArrayList<ItemModel> itemsArray = new ArrayList<ItemModel>();
     public DBWrapper(DBHelper dbHelper) { this.dbHelper = dbHelper; };
     public void save(ItemModel item){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
+        System.out.println("[]save[]"+item.text);
         values.put(DatabaseEntry.COLUMN_NAME_DATE, item.date.getTime());
         values.put(DatabaseEntry.COLUMN_NAME_TEXT, item.text);
-        values.put(DatabaseEntry.COLUMN_NAME_FILE, item.photo.getAbsolutePath());
+        values.put(DatabaseEntry.COLUMN_NAME_FILE, item.photo);
         long newRowId = db.insert(DatabaseEntry.TABLE_NAME, null, values);
-        counter = newRowId;
+
     }
     public void loadResults(){
-        counter = -1;
+
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Cursor cursor = db.query(
             DatabaseEntry.TABLE_NAME,   // The table to query
@@ -48,13 +51,20 @@ public class DBWrapper{
         return counter != 0;
     }
     public ItemModel getPrev(){
+        itemsArray.clear();
+        loadResults();
+
         if (counter < 0 ){ return null;}
         counter -= 1;
         return itemsArray.get((int)counter);
     }
     public ItemModel getNext(){
-        if (counter > itemsArray.size() ){ return null;}
+        itemsArray.clear();
+        loadResults();
+        System.out.println("qwertyuiopoiuytrewqwertyuiop    c"+counter);
         counter += 1;
+        System.out.println("qwertyuiopoiuytrewqwertyuiop    size"+itemsArray.size());
+        System.out.println("qwertyuiopoiuytrewqwertyuiop    c"+counter);
         return itemsArray.get((int)counter);
     }
 

@@ -17,7 +17,7 @@ import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 class Analyzer{
     public static FirebaseVisionText resultBlocks;
     public static MutableLiveData<FirebaseVisionText> textResult = new MutableLiveData<FirebaseVisionText>();
-
+    public static String _result = "";
 
     public static void analyzeText(Bitmap filteredBitmap){
         FirebaseVisionImage firebaseVisionImage = null;

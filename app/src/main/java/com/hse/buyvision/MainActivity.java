@@ -23,7 +23,9 @@ import com.google.firebase.FirebaseApp;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -76,8 +78,8 @@ public class MainActivity extends AppCompatActivity {
                 .setNegativeButtonText(getString(R.string.auth_dialog_negative))
                 .build();
 
-        catch_button = findViewById(R.id.catch_button);
-        historyButton = findViewById(R.id.historyButton);
+        catch_button = findViewById(R.id.photo_button);
+        historyButton = findViewById(R.id.history_button);
         analyzed_text  = findViewById(R.id.analyzed_text);
         analyzed_text.setMovementMethod(new ScrollingMovementMethod());
         analyzed_text.setOnTouchListener((v, event) -> {
@@ -132,7 +134,6 @@ public class MainActivity extends AppCompatActivity {
             image_view.setImageBitmap(imageBitmap);
             ItemModel item = new ItemModel();
             try {
-                String analyzeResult = "";
                 item.photo = photoFile.getAbsolutePath();
                 item.date = new Date();
                 Analyzer.analyzeText(filteredBitmap);
@@ -141,8 +142,9 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
                     Translater translater = new Translater();
-                    analyzeResult = TextParser.parseFirebaseVisionTextBlocks(s);
-                    analyzeResult = TextParser.removeTrash(analyzeResult);
+                    String analyzeResult ="";
+                    analyzeResult=TextParser.parseFirebaseVisionTextBlocks(s);
+                    analyzeResult=TextParser.removeTrash(analyzeResult);
                     translater.setTranslateString(analyzeResult);
                     translater.start();
                     try {
@@ -150,15 +152,17 @@ public class MainActivity extends AppCompatActivity {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    analyzeResult = translater.resultedText;
-                    analyzeResult = TextParser.removeTrash(analyzeResult);
+                    analyzeResult=translater.resultedText;
+                    analyzeResult=TextParser.removeTrash(analyzeResult);
                     analyzed_text.setText(analyzeResult);
                     Speech.vocalise(analyzeResult);
                     translater.setTranslateString("");
                     Analyzer.textResult.setValue(null);
                     Analyzer.textResult.removeObservers(this);
+                    Analyzer._result = analyzeResult;
                 });
-                item.text = analyzeResult;
+                item.text =Analyzer._result;
+                System.out.println("Log{{{}"+item.text);
                 dbWrapper.save(item);
             }
             catch (RuntimeException e){

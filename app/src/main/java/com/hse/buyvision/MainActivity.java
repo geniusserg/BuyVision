@@ -142,10 +142,12 @@ public class MainActivity extends AppCompatActivity {
                     if (s == null){
                         return;
                     }
-                    Translater translater = new Translater();
                     String analyzeResult ="";
+                    
                     analyzeResult=TextParser.parseFirebaseVisionTextBlocks(s);
                     analyzeResult=TextParser.removeTrash(analyzeResult);
+
+                    Translater translater = new Translater();
                     translater.setTranslateString(analyzeResult);
                     translater.start();
                     try {
@@ -155,18 +157,17 @@ public class MainActivity extends AppCompatActivity {
                     }
                     analyzeResult=translater.resultedText;
                     analyzeResult=TextParser.removeTrash(analyzeResult);
+
+                    Speech.vocalise(analyzeResult);
+
                     analyzed_text.setText(analyzeResult);
                     item.text=analyzeResult;
-                    System.out.println("Log{{{}"+item.text);
-                    Speech.vocalise(analyzeResult);
+                    dbWrapper.save(item);
+
                     translater.setTranslateString("");
                     Analyzer.textResult.setValue(null);
                     Analyzer.textResult.removeObservers(this);
-                    Analyzer._result = analyzeResult;
                 });
-                item.text = analyzed_text.getText().toString();
-                System.out.println("Log{{{}"+item.text);
-                dbWrapper.save(item);
             }
             catch (RuntimeException e){
                 analyzed_text.setText(R.string.recgonize_error);

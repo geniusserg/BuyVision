@@ -63,7 +63,7 @@ public class HistoryActivity extends AppCompatActivity {
             Speech.vocalise(noTextError);
         }
         else{
-            SimpleDateFormat sdf = new SimpleDateFormat("MMMM");
+            SimpleDateFormat sdf = new SimpleDateFormat("D MMMM hh:mm");
             String date = sdf.format(item.date);
             String text = "[" + date + "]\n" + item.text;
             System.out.println(item.text);

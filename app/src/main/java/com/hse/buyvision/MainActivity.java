@@ -158,12 +158,11 @@ public class MainActivity extends AppCompatActivity {
                     analyzeResult=translater.resultedText;
                     analyzeResult=TextParser.removeTrash(analyzeResult);
 
-                    Speech.vocalise(analyzeResult);
-
-                    analyzed_text.setText(analyzeResult);
                     item.text=analyzeResult;
                     dbWrapper.save(item);
 
+                    analyzed_text.setText(analyzeResult);
+                    Speech.vocalise(analyzeResult);
                     translater.setTranslateString("");
                     Analyzer.textResult.setValue(null);
                     Analyzer.textResult.removeObservers(this);

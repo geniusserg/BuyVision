@@ -16,7 +16,6 @@ public class DBWrapper{
     public void save(ItemModel item){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        System.out.println("[]save[]"+item.text);
         values.put(DatabaseEntry.COLUMN_NAME_DATE, item.date.getTime());
         values.put(DatabaseEntry.COLUMN_NAME_TEXT, item.text);
         values.put(DatabaseEntry.COLUMN_NAME_FILE, item.photo);
@@ -43,6 +42,7 @@ public class DBWrapper{
             item.photo = cursor.getString(cursor.getColumnIndex(DatabaseEntry.COLUMN_NAME_FILE));
             itemsArray.add(item);
         }
+        System.out.println("Loaded");
     }
     public Boolean hasNext(){
         return counter != itemsArray.size();
@@ -61,9 +61,11 @@ public class DBWrapper{
     public ItemModel getNext(){
         itemsArray.clear();
         loadResults();
-
+        if (itemsArray.size() == 0){
+            return null;
+        }
         counter += 1;
-
+        if (counter >= itemsArray.size()){ counter = 0; }
         return itemsArray.get((int)counter);
     }
 

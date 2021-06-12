@@ -43,18 +43,9 @@ public class HistoryActivity extends AppCompatActivity {
         next_button = findViewById(R.id.next_button);
         //exit_button = findViewbyId(R.id.exit_button);
         next_button.setOnClickListener(v -> {
-            if (viewModel.hasNext()){
-                updateUI(viewModel.getNext());
-            }
-        });
-        if(viewModel.hasNext()){
             updateUI(viewModel.getNext());
-        }
-        else{
-            updateUI(null);
-        }
-
-
+        });
+        updateUI(viewModel.getNext());
     }
     public void updateUI(ItemModel item){
         if (item == null){
@@ -63,7 +54,7 @@ public class HistoryActivity extends AppCompatActivity {
             Speech.vocalise(noTextError);
         }
         else{
-            SimpleDateFormat sdf = new SimpleDateFormat("D MMMM hh:mm");
+            SimpleDateFormat sdf = new SimpleDateFormat("d MMMM hh:mm");
             String date = sdf.format(item.date);
             String text = "[" + date + "]\n" + item.text;
             System.out.println(item.text);

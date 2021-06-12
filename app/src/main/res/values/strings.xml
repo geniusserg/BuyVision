@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Buy Vision</string>
+    <string name="app_name">Помощник для покупателей</string>
     <string name="default_text">Нажмите кнопку Сделать Снимок
         внизу экрана чтобы распознать текст с картинки</string>
     <string name="photo_button">Сделать фото</string>

@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/history_view"
         android:scrollbars="vertical"
-        android:text="PfLoad"
+        android:text="Ошибка"
         android:textAlignment="center"
         android:textColor="#c7bf00"
         android:textSize="26sp" />
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="#c4c4c4"
-        android:text="nexthistory"
+        android:text="Далее"
         android:textColor="#ffea00" />
 
 
